@@ -94,32 +94,23 @@ function TechGrid() {
         lines.current.rotation.z = state.clock.elapsedTime * 0.01;
     });
 
-    const linePositions = useMemo(() => {
-        const arr: [number, number, number, number, number, number][] = [];
+    const gridGeometry = useMemo(() => {
+        const points = [];
         for (let i = 0; i < 12; i++) {
             const x1 = (Math.random() - 0.5) * 28;
             const y1 = (Math.random() - 0.5) * 18;
             const x2 = x1 + (Math.random() - 0.5) * 8;
             const y2 = y1 + (Math.random() - 0.5) * 8;
-            arr.push([x1, y1, -5, x2, y2, -5]);
+            points.push(new THREE.Vector3(x1, y1, -5), new THREE.Vector3(x2, y2, -5));
         }
-        return arr;
+        return new THREE.BufferGeometry().setFromPoints(points);
     }, []);
 
     return (
         <group ref={lines}>
-            {linePositions.map((pos, idx) => {
-                const points = [
-                    new THREE.Vector3(pos[0], pos[1], pos[2]),
-                    new THREE.Vector3(pos[3], pos[4], pos[5]),
-                ];
-                const geom = new THREE.BufferGeometry().setFromPoints(points);
-                return (
-                    <line key={idx} geometry={geom}>
-                        <lineBasicMaterial color="#00d4ff" transparent opacity={0.12} />
-                    </line>
-                );
-            })}
+            <lineSegments geometry={gridGeometry}>
+                <lineBasicMaterial color="#00d4ff" transparent opacity={0.12} />
+            </lineSegments>
         </group>
     );
 }
